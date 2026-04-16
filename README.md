@@ -1,6 +1,5 @@
 # Proyecto de Visualización: Tabaquismo Global en Mujeres en el año 2022 
-![Mapa de Mujeres Fumadoras](Porcentaje_de_mujeres_fumadoras_2022.png)
-Este gráfico fue hecho con Plotly, el cual si bien devuelve un html, fue pasado a PNG y posteriormente subido a la pagina como tal, de ser necesario se haran cambios con respecto al formato y se reemplazará por un html al 100%.
+Los gráficos fueron hechos con Plotly, el cual devuelve un html, de ser necesario se haran cambios con respecto al formato.
 
 ## Integrantes del proyecto:
 - Carlos Rico
