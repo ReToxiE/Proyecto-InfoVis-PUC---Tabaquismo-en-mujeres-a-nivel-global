@@ -6,18 +6,33 @@
     <title>Análisis Global de Tabaquismo</title>
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
     <style>
-        body { background: #0e1117; color: #e6edf3; font-family: "Source Sans 3", sans-serif; margin: 0; padding: 20px; }
+        body { background: #0e1117; color: #e6edf3; font-family: "Source Sans 3", sans-serif; margin: 0; padding: 20px; transition: background 0.3s; }
         h1 { text-align: center; font-weight: 300; margin-bottom: 30px; }
-        .controles { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; align-items: center; background: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d; }
-        button { padding: 8px 16px; cursor: pointer; background: transparent; color: #8b949e; border: 1px solid #30363d; border-radius: 5px; }
+
+        /* Contenedor principal para poner el mapa y pasteles lado a lado */
+        .layout-principal { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
+
+        .controles { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; align-items: center; background: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d; font-size: 30px; }
+        button { padding: 8px 16px; cursor: pointer; background: transparent; color: #8b949e; border: 1px solid #30363d; border-radius: 5px; font-size: 25px; }
         button.active { background: #3b8fe8; color: white; border-color: #3b8fe8; }
-        #mapa { width: 100%; height: 500px; border-radius: 8px; border: 1px solid #30363d; margin-bottom: 20px; }
-        .seccion-pie { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .pie-card { background: #161b22; border-radius: 8px; border: 1px solid #30363d; height: 260px; }
-        .pie-label { text-align: center; font-size: 11px; color: #8b949e; padding-top: 10px; text-transform: uppercase; }
-        #hover-info { position: fixed; right: 30px; bottom: 80px; width: 220px; height: 220px; background: #1c2128; border: 2px solid #3b8fe8; border-radius: 50%; display: none; z-index: 100; box-shadow: 0 0 30px rgba(0,0,0,0.6); }
+
+        /* Ajuste de anchos */
+        #mapa { flex: 3; height: 550px; border-radius: 8px; border: 1px solid #30363d; }
+        .seccion-pie { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; height: 550px; }
+
+        .pie-card { background: #161b22; border-radius: 8px; border: 1px solid #30363d; display: flex; flex-direction: column; overflow: hidden; }
+        .pie-label { text-align: center; font-size: 10px; color: #8b949e; padding-top: 5px; text-transform: uppercase; }
+
+        #hover-info { position: fixed; right: 50px; bottom: 50px; width: 200px; height: 200px; background: #1c2128; border: 2px solid #3b8fe8; border-radius: 50%; display: none; z-index: 100; box-shadow: 0 0 30px rgba(0,0,0,0.6); }
+
         footer { text-align: center; margin-top: 20px; opacity: 0.6; font-size: 12px; }
         footer a { color: #58a6ff; text-decoration: none; }
+
+        /* MODO CLARO */
+        body.light-mode { background: #f0f2f5; color: #1f2328; }
+        .light-mode .controles, .light-mode .pie-card, .light-mode #mapa { background: #ffffff; border-color: #d0d7de; }
+        .light-mode button { color: #57606a; border-color: #d0d7de; }
+        .light-mode #hover-info { background: #ffffff; box-shadow: 0 0 30px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
@@ -26,23 +41,26 @@
 
 <div class="controles">
     <div>
-        <button id="btnM" onclick='setG("Mujeres")'>Mujeres</button>
-        <button id="btnH" onclick='setG("Hombres")'>Hombres</button>
-        <button id="btnA" class="active" onclick='setG("Ambos")'>Ambos</button>
+        <button id="btnM" onclick='setG("Mujeres")'>♀️</button>
+        <button id="btnH" onclick='setG("Hombres")'>♂️</button>
+        <button id="btnA" class="active" onclick='setG("Ambos")'>♀️ y ♂️</button>
     </div>
-    <div style="display: flex; align-items: center; gap: 15px;">
+    <div style="display: flex; align-items: center; gap: 15px; padding: 10px 15px;">
         <span>Año: <span id="yVal"></span></span>
         <input type="range" id="ySlider" oninput="setY(this.value)">
     </div>
+    <button id="btnTheme" onclick="toggleTheme()">🌙</button>
 </div>
 
-<div id="mapa"></div>
+<div class="layout-principal">
+    <div id="mapa"></div>
 
-<div class="seccion-pie">
-    <div class="pie-card"><div class="pie-label">Máximo</div><div id="pieMax" style="height:220px;"></div></div>
-    <div class="pie-card"><div class="pie-label">Promedio Global</div><div id="pieAvg" style="height:220px;"></div></div>
-    <div class="pie-card"><div class="pie-label">Chile</div><div id="pieChi" style="height:220px;"></div></div>
-    <div class="pie-card"><div class="pie-label">Mínimo</div><div id="pieMin" style="height:220px;"></div></div>
+    <div class="seccion-pie">
+        <div class="pie-card"><div class="pie-label">Máximo</div><div id="pieMax" style="height:100%;"></div></div>
+        <div class="pie-card"><div class="pie-label">Promedio Global</div><div id="pieAvg" style="height:100%;"></div></div>
+        <div class="pie-card"><div class="pie-label">Chile</div><div id="pieChi" style="height:100%;"></div></div>
+        <div class="pie-card"><div class="pie-label">Mínimo</div><div id="pieMin" style="height:100%;"></div></div>
+    </div>
 </div>
 
 <div id="hover-info"></div>
@@ -64,13 +82,14 @@
     slider.min = 0; slider.max = years.length - 1; slider.value = years.length - 1;
 
     // FIX: Ahora la función de layout recibe el título correctamente
-    function getPieLayout(textoCentral) {
+    function getPieLayout(textoCentral, textColor) {
         return {
             showlegend: false,
-            margin: {t:25, b:25, l:25, r:25},
+            margin: {t:20, b:20, l:10, r:10},
             paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
             annotations: [{
-                font: {size: 13, color: "#ffffff", weight: "bold"},
+                font: {size: 11, color: textColor, weight: "bold"},
                 showarrow: false,
                 text: textoCentral,
                 x: 0.5, y: 0.5
@@ -79,19 +98,27 @@
     }
 
     function drawPie(divId, val, label, color) {
+        const isLight = document.body.classList.contains("light-mode");
+        const textColor = isLight ? "#1f2328" : "#ffffff";
+        const emptyColor = isLight ? "#e1e4e8" : "#21262d";
+
         const trace = [{
             values: [val, 100 - val],
             labels: ["Fuman", "No Fuman"],
             type: "pie",
             hole: 0.6,
-            marker: { colors: [color, "#21262d"] },
+            marker: { colors: [color, emptyColor] },
             textinfo: "percent",
             hoverinfo: "label"
         }];
-        Plotly.react(divId, trace, getPieLayout(label), {displayModeBar: false});
+        Plotly.react(divId, trace, getPieLayout(label, textColor), {displayModeBar: false});
     }
 
     function update() {
+        const isLight = document.body.classList.contains("light-mode");
+        const themeBg = isLight ? "#ffffff" : "#0e1117";
+        const themeText = isLight ? "#1f2328" : "#8b949e";
+
         const data = curG === "Mujeres" ? dataM : (curG === "Hombres" ? dataH : dataA);
         const col = curG === "Mujeres" ? "Porcentaje de mujeres que fuman" : (curG === "Hombres" ? "Distribución de hombres que fuman (%)" : "Promedio");
         const filtered = data.filter(d => d.Year == curY && d[col] !== null);
@@ -105,13 +132,21 @@
             text: filtered.map(d => d.Entity),
             colorscale: "Viridis",
             zmin: 0, zmax: 60,
-            marker: { line: { color: "#30363d", width: 0.5 } },
-            colorbar: { title: "%", tickfont: { color: "#8b949e" } }
+            marker: { line: { color: isLight ? "#d0d7de" : "#30363d", width: 0.5 } },
+            colorbar: { title: "%", tickfont: { color: themeText } }
         }];
 
         const mapLayout = {
-            geo: { projection: { type: "natural earth" }, bgcolor: "#0e1117", showland: true, landcolor: "#21262d", showocean: true, oceancolor: "#0e1117" },
-            paper_bgcolor: "#0e1117", margin: { t: 0, b: 0, l: 0, r: 0 }
+            geo: { 
+                projection: { type: "natural earth" }, 
+                bgcolor: themeBg, 
+                showland: true, 
+                landcolor: isLight ? "#f6f8fa" : "#21262d", 
+                showocean: true, 
+                oceancolor: themeBg 
+            },
+            paper_bgcolor: themeBg, 
+            margin: { t: 0, b: 0, l: 0, r: 0 }
         };
 
         Plotly.react("mapa", mapTrace, mapLayout, {displayModeBar: false}).then(gd => {
@@ -150,6 +185,16 @@
         if (g === "Ambos") document.getElementById("btnA").classList.add("active");
         update();
     }
+
+    function toggleTheme() {
+    const body = document.body;
+    body.classList.toggle("light-mode");
+    const btn = document.getElementById("btnTheme");
+    btn.innerText = body.classList.contains("light-mode") ? "☀️" : "🌙";
+    // Nota: Plotly requiere llamar a update() o redibujar para ajustar colores internos
+    update(); 
+    }
+
 
     function setY(idx) {
         curY = years[idx];
