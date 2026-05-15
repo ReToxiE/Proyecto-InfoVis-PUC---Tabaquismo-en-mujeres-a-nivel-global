@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Análisis Global de Tabaquismo</title>
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body { background: #0e1117; color: #e6edf3; font-family: "Source Sans 3", sans-serif; margin: 0; padding: 20px; transition: background 0.3s; }
         h1 { text-align: center; font-weight: 300; margin-bottom: 30px; }
@@ -49,6 +50,7 @@
         <span>Año: <span id="yVal"></span></span>
         <input type="range" id="ySlider" oninput="setY(this.value)">
     </div>
+    <button id="btnAudio" onclick="activarAudio()">🔇 Activar Audio</button>
     <button id="btnTheme" onclick="toggleTheme()">🌙</button>
 </div>
 
@@ -81,7 +83,28 @@
     const slider = document.getElementById("ySlider");
     slider.min = 0; slider.max = years.length - 1; slider.value = years.length - 1;
 
-    // FIX: Ahora la función de layout recibe el título correctamente
+    let reproductor;
+    let audioHabilitado = false;
+
+    async function activarAudio() {
+        // Iniciar el contexto de audio del navegador
+        await Tone.start();
+        audioHabilitado = true;
+
+        // Cargar tu archivo de sonido
+        reproductor = new Tone.Sampler({
+            urls: {
+                "C4": "sfx-cough15.mp3"
+            },
+            release: 1,
+            onload: () => {
+                const btn = document.getElementById("btnAudio");
+                btn.innerText = "🔊 Audio Listo";
+                btn.classList.add("active");
+            }
+        }).toDestination();
+    }
+
     function getPieLayout(textoCentral, textColor) {
         return {
             showlegend: false,
@@ -134,6 +157,8 @@
             zmin: 0, zmax: 60,
             marker: { line: { color: isLight ? "#d0d7de" : "#30363d", width: 0.5 } },
             colorbar: { title: "%", tickfont: { color: themeText } }
+
+
         }];
 
         const mapLayout = {
@@ -158,7 +183,19 @@
                 hoverDiv.style.display = "block";
                 // FIX: Pasamos el nombre completo al gráfico flotante
                 drawPie("hover-info", val, name, "#3b8fe8");
+
+                // Sonificación: mapeo del valor al volumen
+                if (audioHabilitado && reproductor) {
+                    let porcentaje = val || 0; 
+
+                    let volumenCalculado = -40 + (porcentaje * 0.4); 
+                    if (volumenCalculado > 5) volumenCalculado = 5; 
+
+                    reproductor.volume.value = volumenCalculado;
+                    reproductor.triggerAttackRelease("C4", "8n");
+                    }
             });
+
             gd.on("plotly_unhover", () => {
                 document.getElementById("hover-info").style.display = "none";
             });
