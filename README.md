@@ -16,4 +16,4 @@ Proyecto en desarrollo para la entrega de este mismo al ramo de Visualización d
 - https://retoxie.github.io/Proyecto-InfoVis-PUC---Tabaquismo-en-mujeres-a-nivel-global/
 
 ### ¿Se usó IA para el proyecto?
-Si, se usó IA para arreglar problemas minimos, pero también para hacer el actual HTML (11-05-2026), esto es debido a que si bien se había logrado un gran avance gracias a Python y Plotly.js, no se pudo seguir avanzando, ya que para hacer nuestro mapa mas interactivo y con mayor cantidad de funcionalidades como lo son la comparación entre generos y el control para ver el gráfico a lo largo del tiempo.
+Se hizo uso de IA para el manejo de errores, aspectos de orden y estetica de la pagina, ademas de funciones adicionales para brindar mejor visualización de graficos, etiquetas, etc. Por otro lado sirvio para apoyar en el desarrollo de arduino y crear un plan de trabajo para manejar de manera correcta algo tan nuevo para nosotros como robotica (sensores y arduino)

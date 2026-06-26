@@ -30,13 +30,13 @@ async function activarAudio() {
     
     // Sonido 1: Tos
     reproductorTos = new Tone.Sampler({
-        urls: { "C4": "sfx-cough15.mp3" },
+        urls: { "C4": "Audios/sfx-cough15.mp3" },
         release: 1
     }).toDestination();
 
     // Sonido 2: Victoria 
     reproductorVictoria = new Tone.Sampler({
-        urls: { "C4": "fnaf_sound.mp3" },
+        urls: { "C4": "Audios/fnaf_sound.mp3" },
         release: 1
     }).toDestination()
     const btn = document.getElementById("btnAudio");

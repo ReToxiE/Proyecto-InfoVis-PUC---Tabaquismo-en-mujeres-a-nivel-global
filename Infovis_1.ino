@@ -5,11 +5,10 @@ const int LOADCELL_SCK_PIN = 3;
 
 HX711 scale;
 
-// Aquí guardamos tu factor de calibración exacto
+// Factor de Calibración
 const float FACTOR_CALIBRACION = -660.0;
 
 void setup() {
-  // Iniciamos la comunicación serial a la velocidad que lee tu app.js
   Serial.begin(9600); 
   
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
@@ -17,10 +16,10 @@ void setup() {
   // Dejamos un segundo para que todo se estabilice mecánicamente
   delay(1000); 
   
-  // Taramos la balanza: define el peso muerto actual del MDF como el "0" inicial
+  // Taramos la balanza
   scale.tare(); 
   
-  // Aplicamos tu factor para que la librería haga la conversión automática
+  // Aplicamos factor de calibración
   scale.set_scale(FACTOR_CALIBRACION); 
 }
 
